@@ -2,22 +2,28 @@ require("dotenv").config();
 
 // Render's free tier blocks all outbound SMTP traffic at the network level
 // (see https://render.com/changelog/free-web-services-will-no-longer-allow-outbound-traffic-to-smtp-ports),
-// which is why the previous Gmail/nodemailer SMTP transport could never
+// which is why the original Gmail/nodemailer SMTP transport could never
 // actually deliver mail once deployed there (it worked fine locally, where
-// no such block exists). Resend's API is plain HTTPS (port 443), so it is
-// not affected by that block. RESEND_API_KEY is set as a Render environment
-// variable — it is never committed to the repo.
-const RESEND_API_URL = "https://api.resend.com/emails";
+// no such block exists). SendGrid's API is plain HTTPS (port 443), so it is
+// not affected by that block.
+//
+// We moved here from Resend because Resend requires a verified *domain* to
+// send to arbitrary recipients. SendGrid only requires a verified *single
+// sender address* (Settings -> Sender Authentication -> Single Sender
+// Verification) to unlock sending to any recipient — no domain purchase
+// needed. SENDGRID_API_KEY is set as a Render environment variable; it is
+// never committed to the repo.
+const SENDGRID_API_URL = "https://api.sendgrid.com/v3/mail/send";
 
-// Resend's free tier only allows sending from this shared address unless a
-// custom domain has been verified in the Resend dashboard. Once a domain is
-// verified there, this can be changed to e.g. "ZoHo Web <noreply@yourdomain.com>".
-const FROM_ADDRESS = process.env.RESEND_FROM || "ZoHo Web <onboarding@resend.dev>";
+// Must exactly match the address verified in SendGrid's Single Sender
+// Verification, or every send is rejected with a 403.
+const FROM_ADDRESS = process.env.SENDGRID_FROM || "utsav6467@gmail.com";
+const FROM_NAME = "ZoHo Web";
 
 const sendOtpToEmail = async (email, otp) => {
-  const apiKey = process.env.RESEND_API_KEY;
+  const apiKey = process.env.SENDGRID_API_KEY;
   if (!apiKey) {
-    throw new Error("RESEND_API_KEY is not configured on the server.");
+    throw new Error("SENDGRID_API_KEY is not configured on the server.");
   }
 
   const html = `
@@ -44,23 +50,23 @@ const sendOtpToEmail = async (email, otp) => {
       </div>
     `;
 
-  // Fail fast instead of hanging if Resend itself is ever slow/unreachable.
+  // Fail fast instead of hanging if SendGrid itself is ever slow/unreachable.
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 10000);
 
   let res;
   try {
-    res = await fetch(RESEND_API_URL, {
+    res = await fetch(SENDGRID_API_URL, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: FROM_ADDRESS,
-        to: [email],
+        personalizations: [{ to: [{ email }] }],
+        from: { email: FROM_ADDRESS, name: FROM_NAME },
         subject: "Your ZoHo Web OTP Code",
-        html,
+        content: [{ type: "text/html", value: html }],
       }),
       signal: controller.signal,
     });
@@ -73,21 +79,22 @@ const sendOtpToEmail = async (email, otp) => {
     clearTimeout(timeout);
   }
 
+  // SendGrid returns 202 with an empty body on success — no JSON to parse.
   if (!res.ok) {
     let details = "";
     try {
       const body = await res.json();
-      details = body && body.message ? body.message : JSON.stringify(body);
+      details = body && body.errors ? JSON.stringify(body.errors) : JSON.stringify(body);
     } catch (_) {
       details = await res.text().catch(() => "");
     }
-    console.error(`[emailService] Resend send FAILED (${res.status}): ${details}`);
-    throw new Error(`Resend API responded with ${res.status}: ${details}`);
+    console.error(`[emailService] SendGrid send FAILED (${res.status}): ${details}`);
+    throw new Error(`SendGrid API responded with ${res.status}: ${details}`);
   }
 
-  const data = await res.json();
-  console.log(`[emailService] OTP email queued via Resend for ${email} — id: ${data.id}`);
-  return data;
+  const messageId = res.headers.get("x-message-id");
+  console.log(`[emailService] OTP email queued via SendGrid for ${email} — id: ${messageId}`);
+  return { id: messageId };
 };
 
 module.exports = { sendOtpToEmail };
