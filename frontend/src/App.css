@@ -1,0 +1,295 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* Core surfaces — background < surface < elevated, one accent, thin borders */
+  --bg-canvas: #080A0C;
+  --bg-surface: #0D1115;
+  --bg-surface-2: #0c0e11;
+  --bg-elevated: #11161B;
+  --bg-hover: #161b21;
+  --border-subtle: #202830;
+  --border-strong: #2b343e;
+  --text-main: #F5F7FA;
+  --text-muted: #8a939e;
+  --accent-emerald: #10b981;
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Text hierarchy tokens */
+  --text-primary: #F5F7FA;
+  --text-secondary: #a3adb8;
+  --text-muted-2: #6b7480;
+  --text-disabled: #454c56;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-canvas);
+  color: var(--text-main);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  letter-spacing: -0.011em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-mono-code {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Perspective container for 3D card tilt */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+/* Subtle border grid texture */
+.grid-bg {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+}
+
+/* Micro interaction press effect */
+.active-press {
+  transition: transform 0.12s var(--ease-spring), background-color 0.15s ease;
+}
+.active-press:active {
+  transform: scale(0.985) translateY(1px);
+}
+
+/* Custom Scrollbars */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #1f232b;
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #2d333f;
+}
+
+/* Hide scrollbar utility */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ============================================================
+   LIGHT THEME
+   The auth/landing page and workspace intentionally keep their
+   existing dark-mode markup untouched (arbitrary-hex Tailwind
+   utility classes). Rather than rewriting every component, we
+   remap the small, finite palette those components use whenever
+   [data-theme="light"] is set on <html>. The green accent and
+   overall layout/spacing/animations are unchanged in both modes.
+   ============================================================ */
+
+[data-theme='light'] {
+  --bg-canvas: #f6f7f9;
+  --bg-surface: #ffffff;
+  --bg-surface-2: #f1f2f5;
+  --bg-hover: #eef0f3;
+  --border-subtle: #e3e6ea;
+  --border-strong: #c9cfd8;
+  --text-main: #10141a;
+  --text-muted: #64748b;
+}
+
+[data-theme='light'] body {
+  background-color: #f6f7f9;
+  color: #10141a;
+}
+
+/* Canvas / page backgrounds */
+[data-theme='light'] .bg-\[\#080A0D\],
+[data-theme='light'] .bg-\[\#08090b\] {
+  background-color: #f6f7f9 !important;
+}
+
+/* Card / panel surfaces */
+[data-theme='light'] .bg-\[\#101318\],
+[data-theme='light'] .bg-\[\#101216\] {
+  background-color: #ffffff !important;
+}
+[data-theme='light'] .bg-\[\#0c0e11\] {
+  background-color: #f1f2f5 !important;
+}
+[data-theme='light'] .bg-\[\#1a1e27\],
+[data-theme='light'] .hover\:bg-\[\#1a1e27\]:hover {
+  background-color: #eef0f3 !important;
+}
+[data-theme='light'] .bg-\[\#14171d\],
+[data-theme='light'] .hover\:bg-\[\#14171d\]:hover {
+  background-color: #f1f2f5 !important;
+}
+
+/* Borders */
+[data-theme='light'] .border-\[\#1f232b\],
+[data-theme='light'] .hover\:border-\[\#1f232b\]:hover {
+  border-color: #e3e6ea !important;
+}
+[data-theme='light'] .border-\[\#2d333f\],
+[data-theme='light'] .hover\:border-\[\#2d333f\]:hover {
+  border-color: #c9cfd8 !important;
+}
+
+/* Primary text */
+[data-theme='light'] .text-\[\#F5F7FA\] {
+  color: #10141a !important;
+}
+
+/* Slate text scale -> inverted for light backgrounds */
+[data-theme='light'] .text-slate-100 { color: #0f172a !important; }
+[data-theme='light'] .text-slate-200 { color: #1e293b !important; }
+[data-theme='light'] .text-slate-300 { color: #334155 !important; }
+[data-theme='light'] .text-slate-400 { color: #475569 !important; }
+[data-theme='light'] .text-slate-500 { color: #64748b !important; }
+[data-theme='light'] .text-slate-600 { color: #94a3b8 !important; }
+[data-theme='light'] .hover\:text-slate-200:hover { color: #1e293b !important; }
+[data-theme='light'] .hover\:text-slate-300:hover { color: #334155 !important; }
+[data-theme='light'] .hover\:text-white:hover { color: #0f172a !important; }
+[data-theme='light'] .placeholder\:text-slate-600::placeholder { color: #94a3b8 !important; }
+
+/* Slate surfaces / borders used sparingly on dark cards */
+[data-theme='light'] .bg-slate-900\/30 { background-color: rgba(15, 23, 42, 0.05) !important; }
+[data-theme='light'] .bg-slate-800 { background-color: #e2e8f0 !important; }
+[data-theme='light'] .border-slate-700 { border-color: #cbd5e1 !important; }
+[data-theme='light'] .bg-slate-700 { background-color: #cbd5e1 !important; }
+
+/* "My message" bubble accent (kept green in both themes) */
+[data-theme='light'] .bg-\[\#13231e\] {
+  background-color: #e7f8f0 !important;
+}
+[data-theme='light'] .border-\[\#1b3d32\] {
+  border-color: #b7ecd4 !important;
+}
+
+/* Subtle grid texture: darker lines read better on a light canvas */
+[data-theme='light'] .grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(15, 23, 42, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
+}
+
+/* Error boundary + misc emerald/rose glows stay identical (green accent preserved) */
+
+/* ============================================================
+   WORKSPACE MICRO-ANIMATIONS
+   ============================================================ */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+@keyframes messageIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes progress {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+.animate-message-in {
+  animation: messageIn 0.2s var(--ease-spring);
+}
+
+/* Page/section reveal — fires once per tab switch (the container is keyed
+   on activeTab in WorkspaceShell), subtle and quick per the 150-300ms rule. */
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-page-in {
+  animation: pageIn 220ms var(--ease-out);
+}
+
+/* Modal enter/exit — used alongside existing backdrop fade for a soft
+   scale+rise instead of an abrupt pop-in. */
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-modal-in {
+  animation: modalIn 200ms var(--ease-spring);
+}
+
+/* Ambient cursor glow — a soft, low-opacity radial highlight that tracks
+   the pointer (position set via CSS vars in WorkspaceShell, rAF-throttled).
+   Intentionally faint: this is a background accent, not a spotlight or
+   trail effect, and never intercepts clicks. */
+.cursor-glow {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(480px circle at var(--cursor-x, 50%) var(--cursor-y, 50%), rgba(16, 185, 129, 0.05), transparent 42%);
+}
+[data-theme='light'] .cursor-glow {
+  background: radial-gradient(480px circle at var(--cursor-x, 50%) var(--cursor-y, 50%), rgba(16, 185, 129, 0.06), transparent 42%);
+}
+
+/* Card hover lift — tasteful, no giant tilt/3D; pairs with active-press. */
+.hover-lift {
+  transition: transform 0.18s var(--ease-out), border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -12px rgba(0, 0, 0, 0.45);
+}
+
+/* Staggered list entrance — each item fades/rises in slightly after the
+   previous one (driven by the --i custom property set inline per item).
+   Used on Home's activity feed / conversation grid / recent files so a
+   fresh page load reads as a deliberate reveal instead of a static dump. */
+@keyframes staggerFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.stagger-item {
+  opacity: 0;
+  animation: staggerFadeIn 320ms var(--ease-out) forwards;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+
+/* Faint drifting accent dots behind the landing hero — see FloatingDots in
+   AuthScreen.js. Restrained: small, low-opacity, slow, never converging
+   into a shape or trail. */
+@keyframes floatDot {
+  0%, 100% { transform: translate(0, 0); opacity: 0.35; }
+  50% { transform: translate(6px, -10px); opacity: 0.7; }
+}
+.animate-float-dot {
+  animation-name: floatDot;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+/* Scroll-reveal — sections start slightly lowered/faded and settle into
+   place once they cross into the viewport (see the Reveal wrapper in
+   AuthScreen.js). Kept short and subtle, not a slide-in spectacle. */
+.reveal-init {
+  opacity: 0;
+  transform: translateY(16px);
+}
+.reveal-in {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 480ms var(--ease-out), transform 480ms var(--ease-out);
+}
