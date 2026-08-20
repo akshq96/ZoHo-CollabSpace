@@ -3,7 +3,7 @@ import io from 'socket.io-client';
 import AuthScreen from './components/AuthScreen';
 import ProfileSetup from './components/ProfileSetup';
 import WorkspaceShell from './components/workspace/WorkspaceShell';
-import { API_BASE } from './config';
+import { API_BASE, SOCKET_URL } from './config';
 import './App.css';
 
 function App() {
@@ -54,12 +54,12 @@ function App() {
       return;
     }
 
-    // const newSocket = io('http://localhost:8000', {
-    //   query: { userId: user._id }
-    // });
-
-    const newSocket = io('https://zoho-collabspace.onrender.com', {
-    query: { userId: user._id }
+    // Was hardcoded to http://localhost:8000 — same class of bug as
+    // API_BASE (see config.js): in production this silently tried to open a
+    // websocket to the visitor's own machine, so online-presence/typing/
+    // real-time messages would look "broken" even if the REST API worked.
+    const newSocket = io(SOCKET_URL, {
+      query: { userId: user._id }
     });
 
     newSocket.on('connect', () => {
