@@ -54,8 +54,12 @@ function App() {
       return;
     }
 
-    const newSocket = io('http://localhost:8000', {
-      query: { userId: user._id }
+    // const newSocket = io('http://localhost:8000', {
+    //   query: { userId: user._id }
+    // });
+
+    const newSocket = io('https://zoho-collabspace.onrender.com', {
+    query: { userId: user._id }
     });
 
     newSocket.on('connect', () => {

@@ -6,4 +6,5 @@
 // initialization" the moment any view rendered, breaking the entire
 // authenticated app (blank/crashed workspace). Moving API_BASE here — a
 // leaf module nothing else depends on — breaks the cycle for good.
-export const API_BASE = 'http://localhost:8000/api';
+// export const API_BASE = 'http://localhost:8000/api';
+export const API_BASE = 'https://zoho-collabspace.onrender.com/api';
